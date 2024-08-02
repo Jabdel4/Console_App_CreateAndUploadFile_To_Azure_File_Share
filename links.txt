@@ -1,0 +1,6 @@
+https://learn.microsoft.com/en-us/azure/storage/files/storage-dotnet-how-to-use-files#understanding-the-net-apis
+https://learn.microsoft.com/en-us/azure/storage/files/files-samples-dotnet-v11
+https://stackoverflow.com/questions/1881050/creating-a-huge-dummy-file-in-a-matter-of-seconds-in-c-sharp
+https://learn.microsoft.com/en-us/answers/questions/863505/uploading-files-more-than-30-mb-to-azure-fileshare
+https://github.com/Azure-Samples/Azure-CXP-Developer-Support/tree/main/Storage/File/dotnet/StreamUploadusingFileShareclient
+https://stackoverflow.com/questions/67890282/writing-file-to-azure-storage-file-share
