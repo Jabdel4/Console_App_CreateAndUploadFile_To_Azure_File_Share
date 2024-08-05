@@ -13,14 +13,26 @@ namespace AzureFileShareIO
     {
         class DummyFile
         {
-            private async Task CredentialsAsync(string shareName)
-            {
-                var config = new ConfigurationBuilder().AddUserSecrets<Program>().Build();
-                var connectionString = config.GetSection("StorageCredentials")["StorageConnectionString"];
+            //private async Task CredentialsAsync(string shareName)
+            //{
 
-                ShareClient share = new(connectionString, shareName);
-                Console.WriteLine("Connection to Azure Storage succeeded...");
-            }
+
+
+            //}
+
+            public async Task DummyFileAsync(string shareName, string fileName) {
+            {
+
+                    // Accessed the secrets
+                    var config = new ConfigurationBuilder().AddUserSecrets<Program>().Build();
+                    var connectionString = config.GetSection("StorageCredentials")["StorageConnectionString"];
+
+                    //Log into th File Share
+                    ShareClient share = new(connectionString, shareName);
+                    Console.WriteLine("Connection to Azure Storage succeeded...");
+
+
+ 
 
         }
     }
