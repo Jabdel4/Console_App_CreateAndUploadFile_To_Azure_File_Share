@@ -19,9 +19,10 @@ namespace AzureFileShareIO
 
 
             //}
-
-            public async Task DummyFileAsync(string shareName, string fileName)
+            public class Tasks
             {
+                public async Task DummyFileAsync(string shareName, string fileName)
+                {
 
                     // Accessed the secrets
                     var config = new ConfigurationBuilder().AddUserSecrets<Program>().Build();
@@ -65,10 +66,13 @@ namespace AzureFileShareIO
                         Console.WriteLine($"Upload of {fileName} in progress...\n");
                         await dummyFileClient.UploadAsync(stream, shareFileUploadOptions);
                         Console.WriteLine("Upload successful...");
-                    } else
-                {
-                    Console.WriteLine($"Upload of {fileName} has failed...");
-                }              
+                    }
+                    else
+                    {
+                        Console.WriteLine($"Upload of {fileName} has failed...");
+                    }
+                }
+
             }
 
 
