@@ -7,71 +7,92 @@ using System.IO;
 using System.Text;
 using System.Xml.Linq;
 
-
-const long ONE_GIGABYTE = 110737420000;
-
-// Specify the connection string for your Azure File Storage account
-string connectionString = "";
-
-// Specify the name of the file share where you want to upload the file
-string shareName = "";
-
-// Specify the desired name for the file you want to upload
-string fileName = "dummy5.txt";
-
-ShareClient share = new ShareClient(connectionString, shareName);
-
-await share.CreateIfNotExistsAsync();
-
-// Create a file of 50MB or more...
-MemoryStream stream = new MemoryStream();
-stream.Seek(500 * 1024 * 1024, SeekOrigin.Begin);
-stream.WriteByte(0);
-
-// Create a client to interact with the file in the Azure File Storage
-ShareFileClient fileClient = new ShareFileClient(connectionString, shareName, fileName);
-
-// Set the maximum size for a file share
-int increaseSizeInGiB = 5;
-
-if (await share.ExistsAsync())
+namespace AzureFileShareIO
 {
-    // Get and display current share quota
-    ShareProperties properties = await share.GetPropertiesAsync();
-    Console.WriteLine($"Current share quota: {properties.QuotaInGB} GiB");
-
-    // Get and display current usage stats for the share
-    ShareStatistics stats = await share.GetStatisticsAsync();
-    Console.WriteLine($"Current share usage: {stats.ShareUsageInBytes} bytes");
-
-    // Convert current usage from bytes into GiB
-    int currentGiB = (int)(stats.ShareUsageInBytes / ONE_GIGABYTE);
-
-    // This line sets the quota to be the current 
-    // usage of the share plus the increase amount
-    await share.SetQuotaAsync(currentGiB + increaseSizeInGiB);
-
-    // Get the new quota and display it
-    properties = await share.GetPropertiesAsync();
-    Console.WriteLine($"New share quota: {properties.QuotaInGB} GiB");
-}
-//Specify the upload options, including transfer options
-ShareFileUploadOptions uploadOptions = new ShareFileUploadOptions
-{
-    TransferOptions = new StorageTransferOptions
+    internal class Program
     {
-        // Specify the initial and maximum transfer size for the upload
-        InitialTransferSize = 1024 * 1024 * 4,
-        MaximumTransferSize = 1024 * 1024 * 4
+        class DummyFile
+        {
+            //private async Task CredentialsAsync(string shareName)
+            //{
+
+
+
+            //}
+            public class Tasks
+            {
+                public async Task DummyFileAsync(string shareName, string fileName)
+                {
+
+                    // Accessed the secrets
+                    var config = new ConfigurationBuilder().AddUserSecrets<Program>().Build();
+                    var connectionString = config.GetSection("StorageCredentials")["StorageConnectionString"];
+
+                    //Log into th File Share
+                    ShareClient dummyShare = new(connectionString, shareName);
+                    Console.WriteLine("Connection to Azure File Share succeeded...");
+
+                    // Create a file of 50MB or more...
+                    // TODO check if the file share already exists. If not, create it. If yes, just create and upload the file to the existing FS
+                    await dummyShare.CreateIfNotExistsAsync();
+                    Console.WriteLine($"File share {shareName} does not exist...");
+                    Console.WriteLine($"So, we created it...");
+
+                    MemoryStream stream = new MemoryStream();
+                    stream.Seek(800 * 1024 * 1024, SeekOrigin.Begin);
+                    stream.WriteByte(0);
+
+                    // Client to interact with the file in the Azure File Share
+                    ShareFileClient dummyFileClient = new ShareFileClient(connectionString, shareName, fileName);
+
+                    // TODO check if the file already exists. If yes, stop the process/give another name. If not, create the file.
+
+                    // Specify the upload options, including transfer options
+                    ShareFileUploadOptions shareFileUploadOptions = new ShareFileUploadOptions
+                    {
+                        TransferOptions = new StorageTransferOptions
+                        {
+                            // Specify the initial and maximum transfer size for the upload
+                            InitialTransferSize = 1024 * 1024 * 4,
+                            MaximumTransferSize = 1024 * 1024 * 4
+                        }
+                    };
+
+                    // Create the file on the Azure FIle Share with the specified size
+                    await dummyFileClient.CreateAsync(stream.Length);
+                    Console.WriteLine($"We have created {fileName} for you...");
+
+                    // Upload the stream to the file in the Azure File Share, using the specified upload options
+                    if (stream.Position < stream.Length)
+                    {
+                        Console.WriteLine($"Upload of {fileName} in progress...\n");
+                        await dummyFileClient.UploadAsync(stream, shareFileUploadOptions);
+                        Console.WriteLine("Upload successful...");
+                    }
+                }
+
+            }
+
+
+            static async Task Main(string[] args)
+            {
+                Console.WriteLine("Welcome to the DummyFileAsync method");
+                Console.WriteLine("Enter the share name");
+                var dummyShareName = Console.ReadLine();
+
+                Console.WriteLine("Enter the file name");
+                var dummyFile = Console.ReadLine();
+
+                // Call the DummyFileAsync task
+                Tasks dummyTask = new Tasks();
+                await dummyTask.DummyFileAsync($"{dummyShareName}", $"{dummyFile}");
+
+                Console.WriteLine("Create and Upload operations done.");
+                Console.WriteLine("Press any key to continue...");
+                Console.ReadLine();
+
+            }
+        }
     }
-};
-
-// Create the file on the Azure File Storage with the specified size
-await fileClient.CreateAsync(stream.Length);
-
-// Upload the stream to the file in the Azure File Storage, using the specified upload options
-if (stream.Position < stream.Length)
-{
-    await fileClient.UploadAsync(stream, uploadOptions);
-    Console.WriteLine("Upload successful...");
 }
+
