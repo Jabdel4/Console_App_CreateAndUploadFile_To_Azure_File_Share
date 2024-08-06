@@ -85,6 +85,10 @@ namespace AzureFileShareIO
                 Console.WriteLine("Enter the file name");
                 var dummyFile = Console.ReadLine();
 
+                // Call the DummyFileAsync task
+                Tasks dummyTask = new Tasks();
+                await dummyTask.DummyFileAsync($"{dummyShareName}", $"{dummyFile}");
+
                 Console.WriteLine("Create and Upload operations done.");
                 Console.WriteLine("Press any key to continue...");
                 Console.ReadLine();
