@@ -33,17 +33,19 @@ namespace AzureFileShareIO
                     Console.WriteLine("Connection to Azure File Share succeeded...");
 
                     // Create a file of 50MB or more...
-                    // Firstly check if the file we want to upload already exists
+                    // TODO check if the file share already exists. If not, create it. If yes, just create and upload the file to the existing FS
                     await dummyShare.CreateIfNotExistsAsync();
                     Console.WriteLine($"File share {shareName} does not exist...");
                     Console.WriteLine($"So, we created it...");
 
                     MemoryStream stream = new MemoryStream();
-                    stream.Seek(500 * 1024 * 1024, SeekOrigin.Begin);
+                    stream.Seek(800 * 1024 * 1024, SeekOrigin.Begin);
                     stream.WriteByte(0);
 
                     // Client to interact with the file in the Azure File Share
                     ShareFileClient dummyFileClient = new ShareFileClient(connectionString, shareName, fileName);
+
+                    // TODO check if the file already exists. If yes, stop the process/give another name. If not, create the file.
 
                     // Specify the upload options, including transfer options
                     ShareFileUploadOptions shareFileUploadOptions = new ShareFileUploadOptions
