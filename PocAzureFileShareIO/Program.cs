@@ -67,10 +67,6 @@ namespace AzureFileShareIO
                         await dummyFileClient.UploadAsync(stream, shareFileUploadOptions);
                         Console.WriteLine("Upload successful...");
                     }
-                    else
-                    {
-                        Console.WriteLine($"Upload of {fileName} has failed...");
-                    }
                 }
 
             }
