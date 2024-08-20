@@ -1,3 +1,5 @@
+[![Build Status](https://dev.azure.com/jobalos95/azdo-poc-project-57085/_apis/build/status%2Fazdo-poc-project-57085?branchName=main)](https://dev.azure.com/jobalos95/azdo-poc-project-57085/_build/latest?definitionId=3&branchName=main)
+
 # Simple Azure Project
 
 This project helps me to undersand how to create a console application with .NET 8 and Azure Files.
