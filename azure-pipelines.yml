@@ -49,7 +49,7 @@ steps:
   displayName: 'Run tests'
   inputs:
     command: 'test'
-    projects: '**/*.csproj'
+    projects: 'PocAzureFileShareIO/*.csproj'
     arguments: '--configuration $(BuildConfiguration)'
 
 - task: DotNetCoreCLI@2
@@ -58,7 +58,7 @@ steps:
   inputs:
     command: 'publish'
     publishWebProjects: false
-    projects: '**/*.csproj'
+    projects: 'PocAzureFileShareIO/*.csproj'
     arguments: '--configuration $(BuildConfiguration) --output $(Build.ArtifactStagingDirectory)'
     zipAfterPublish: true
 
