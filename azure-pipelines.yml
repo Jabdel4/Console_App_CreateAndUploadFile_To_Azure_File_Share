@@ -1,34 +1,68 @@
-# ASP.NET
-# Build and test ASP.NET projects.
-# Add steps that publish symbols, save build artifacts, deploy, and more:
-# https://docs.microsoft.com/azure/devops/pipelines/apps/aspnet/build-aspnet-4
+name: $(Build.DefinitionName)_$(SourceBranchName)_$(Date:yyyyMMdd).$(Rev:r)
 
 trigger:
-- master
+  batch: true
+  branches:
+    include:
+    - master
+    - feature/*
+    - azure-pipelines.yml
 
+strategy:
+  matrix:
+    imageWin:
+      os.version: 'windows-latest'
+    imageLinux:
+      os.version: 'ubuntu-latest'
+    imageMac:
+      os.version: 'macOS-14'
+    
 pool:
-  vmImage: 'windows-latest'
+  vmImage: $(os.version)
 
 variables:
-  solution: '**/*.sln'
-  buildPlatform: 'Any CPU'
-  buildConfiguration: 'Release'
+  BuildConfiguration: 'Release'
+  system.debug: true
 
 steps:
-- task: NuGetToolInstaller@1
-
-- task: NuGetCommand@2
+- task: UseDotNet@2
   inputs:
-    restoreSolution: '$(solution)'
+    version: '8.x'
 
-- task: VSBuild@1
+- task: DotNetCoreCLI@2
+  name: 'Restore'
+  displayName: 'Run Restore'
   inputs:
-    solution: '$(solution)'
-    msbuildArgs: '/p:DeployOnBuild=true /p:WebPublishMethod=Package /p:PackageAsSingleFile=true /p:SkipInvalidConfigurations=true /p:PackageLocation="$(build.artifactStagingDirectory)"'
-    platform: '$(buildPlatform)'
-    configuration: '$(buildConfiguration)'
+    command: restore
+    projects: 'PocAzureFileShareIO/*.sln'
 
-- task: VSTest@2
+- task: DotNetCoreCLI@2
+  name: 'Build'
+  displayName: 'Build Solution'
   inputs:
-    platform: '$(buildPlatform)'
-    configuration: '$(buildConfiguration)'
+    command: 'build'
+    projects: 'PocAzureFileShareIO/*.csproj'
+    arguments: '--configuration $(BuildConfiguration)'
+
+- task: DotNetCoreCLI@2
+  name: 'Tests'
+  displayName: 'Run tests'
+  inputs:
+    command: 'test'
+    projects: '**/*.csproj'
+    arguments: '--configuration $(BuildConfiguration)'
+
+- task: DotNetCoreCLI@2
+  name: 'Publish'
+  displayName: 'Publish'
+  inputs:
+    command: 'publish'
+    publishWebProjects: false
+    projects: '**/*.csproj'
+    arguments: '--configuration $(BuildConfiguration) --output $(Build.ArtifactStagingDirectory)'
+    zipAfterPublish: true
+
+- publish: $(Build.ArtifactStagingDirectory)
+  displayName: Publish
+  artifact: drop
+
