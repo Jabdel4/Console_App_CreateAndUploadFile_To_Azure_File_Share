@@ -8,61 +8,66 @@ trigger:
     - feature/*
     - azure-pipelines.yml
 
-strategy:
-  matrix:
-    imageWin:
-      os.version: 'windows-latest'
-    imageLinux:
-      os.version: 'ubuntu-latest'
-    imageMac:
-      os.version: 'macOS-14'
-    
-pool:
-  vmImage: $(os.version)
-
 variables:
   BuildConfiguration: 'Release'
   system.debug: true
 
-steps:
-- task: UseDotNet@2
-  inputs:
-    version: '8.x'
+jobs:
+  - job: Build
+    displayName: 'Build'
+    strategy:
+      matrix:
+        imageWin:
+          os.version: 'windows-latest' # Test on Windows
+        imageLinux:
+          os.version: 'ubuntu-latest' # Test on Linux
+        imageMac:
+          os.version: 'macOS-14' # Test on MacOS
+    pool:
+      vmImage: $(os.version)
+    steps:
+    - task: UseDotNet@2
+      inputs:
+        version: '8.x'
 
-- task: DotNetCoreCLI@2
-  name: 'Restore'
-  displayName: 'Run Restore'
-  inputs:
-    command: restore
-    projects: 'PocAzureFileShareIO/*.sln'
+    - task: DotNetCoreCLI@2
+      name: 'Restore'
+      displayName: 'Run Restore'
+      inputs:
+        command: restore
+        projects: 'PocAzureFileShareIO/*.sln'
 
-- task: DotNetCoreCLI@2
-  name: 'Build'
-  displayName: 'Build Solution'
-  inputs:
-    command: 'build'
-    projects: 'PocAzureFileShareIO/*.csproj'
-    arguments: '--configuration $(BuildConfiguration)'
+    - task: DotNetCoreCLI@2
+      name: 'Build'
+      displayName: 'Build Solution'
+      inputs:
+        command: 'build'
+        projects: 'PocAzureFileShareIO/*.csproj'
+        arguments: '--configuration $(BuildConfiguration)'
 
-- task: DotNetCoreCLI@2
-  name: 'Tests'
-  displayName: 'Run tests'
-  inputs:
-    command: 'test'
-    projects: 'PocAzureFileShareIO/*.csproj'
-    arguments: '--configuration $(BuildConfiguration)'
+    - task: DotNetCoreCLI@2
+      name: 'Tests'
+      displayName: 'Run tests'
+      inputs:
+        command: 'test'
+        projects: 'PocAzureFileShareIO/*.csproj'
+        arguments: '--configuration $(BuildConfiguration)'
 
-- task: DotNetCoreCLI@2
-  name: 'Publish'
-  displayName: 'Publish'
-  inputs:
-    command: 'publish'
-    publishWebProjects: false
-    projects: 'PocAzureFileShareIO/*.csproj'
-    arguments: '--configuration $(BuildConfiguration) --output $(Build.ArtifactStagingDirectory)'
-    zipAfterPublish: true
+    - task: DotNetCoreCLI@2
+      name: 'Publish'
+      displayName: 'Publish'
+      inputs:
+        command: 'publish'
+        publishWebProjects: false
+        projects: 'PocAzureFileShareIO/*.csproj'
+        arguments: '--configuration $(BuildConfiguration) --output $(Build.ArtifactStagingDirectory)'
+        zipAfterPublish: true
 
-- publish: $(Build.ArtifactStagingDirectory)
-  displayName: Publish
-  artifact: drop
+    - publish: $(Build.ArtifactStagingDirectory)
+      displayName: Publish
+      artifact: drop
+
+    
+
+    
 
