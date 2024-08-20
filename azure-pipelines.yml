@@ -15,16 +15,16 @@ variables:
 jobs:
   - job: Build
     displayName: 'Build'
-    strategy:
-      matrix:
-        imageWin:
-          os.version: 'windows-latest' # Test on Windows
-        imageLinux:
-          os.version: 'ubuntu-latest' # Test on Linux
-        imageMac:
-          os.version: 'macOS-14' # Test on MacOS
+    # strategy:
+    #   matrix:
+    #     imageWin:
+    #       os.version: 'windows-latest' # Test on Windows
+    #     imageLinux:
+    #       os.version: 'ubuntu-latest' # Test on Linux
+    #     imageMac:
+    #       os.version: 'macOS-14' # Test on MacOS
     pool:
-      vmImage: $(os.version)
+      vmImage: 'windows-latest'
     steps:
     - task: UseDotNet@2
       inputs:
