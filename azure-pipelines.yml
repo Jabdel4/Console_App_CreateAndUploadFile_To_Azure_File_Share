@@ -6,7 +6,12 @@ trigger:
     include:
     - master
     - feature/*
+
+  paths:
+    include:
     - azure-pipelines.yml
+    exclude:
+    - Readme.md
 
 variables:
   BuildConfiguration: 'Release'
