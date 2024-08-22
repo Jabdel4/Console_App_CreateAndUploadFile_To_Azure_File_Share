@@ -28,8 +28,7 @@ jobs:
     #       os.version: 'ubuntu-latest' # Test on Linux
     #     imageMac:
     #       os.version: 'macOS-14' # Test on MacOS
-    pool:
-      vmImage: 'windows-latest'
+    pool: 'DevopsTest'
     steps:
     - task: UseDotNet@2
       inputs:
